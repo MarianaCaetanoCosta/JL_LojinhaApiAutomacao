@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import pojo.UsuarioPojo;
 
 //Static Imports
 import static io.restassured.RestAssured.*;
@@ -26,13 +27,14 @@ public class ProdutoTest {
         //port = 8080;
         basePath = "/lojinha";
 
+        UsuarioPojo usuario = new UsuarioPojo();
+        usuario.setUsuarioLogin("admin");
+        usuario.setUsuarioSenha("admin");
+
         //Obter o token do usuário admin
         this.token = given()
                         .contentType(ContentType.JSON)
-                        .body("{\n" +
-                                "  \"usuarioLogin\": \"admin\",\n" +
-                                "  \"usuarioSenha\": \"admin\"\n" +
-                                "}")
+                        .body(usuario)
                 .when()
                     .post("/v2/login")
                 .then()
