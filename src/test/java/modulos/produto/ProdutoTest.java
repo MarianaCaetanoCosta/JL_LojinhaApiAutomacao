@@ -1,6 +1,7 @@
 package modulos.produto;
 
 import dataFactory.ProdutoDataFactory;
+import dataFactory.UsuarioDataFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.internal.common.assertion.Assertion;
@@ -33,14 +34,10 @@ public class ProdutoTest {
         //port = 8080;
         basePath = "/lojinha";
 
-        UsuarioPojo usuario = new UsuarioPojo();
-        usuario.setUsuarioLogin("admin");
-        usuario.setUsuarioSenha("admin");
-
         //Obter o token do usuário admin
         this.token = given()
                         .contentType(ContentType.JSON)
-                        .body(usuario)
+                        .body(UsuarioDataFactory.criarUsuarioAdministrador())
                 .when()
                     .post("/v2/login")
                 .then()
