@@ -1,16 +1,47 @@
 package modulos.produto;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.internal.common.assertion.Assertion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+//Static Imports
+import static io.restassured.RestAssured.*;
+import static io.restassured.matcher.RestAssuredMatchers.*;
+import static org.hamcrest.Matchers.*;
 
 @DisplayName("Testes de API Reste do módulo de Produto")
 public class ProdutoTest {
     @Test
     @DisplayName("Validar os limites proibidos do valor do produto")
     public void testValidarLimitesProibidosValorProduto(){
-        double valor = 0.01;
-        Assertions.assertTrue(valor > 0.00);
+        //Configurando os dados da API Rest da Lojinha
+        baseURI = "http://165.227.93.41";
+        //port = 8080;
+        basePath = "/lojinha";
+
+        //Obter o token do usuário admin
+        String token =
+            given()
+                .contentType(ContentType.JSON)
+                .body("{\n" +
+                        "  \"usuarioLogin\": \"admin\",\n" +
+                        "  \"usuarioSenha\": \"admin\"\n" +
+                        "}")
+            .when()
+                    .post("/v2/login")
+            .then()
+                    .extract()
+                    //.path("data.token");
+                    .path("message");
+
+        //System.out.println(token);
+
+        //Tentar inserir produto com valor 0.00 e validar mensagem de erro com status code 422
+
+        }
+
     }
 }
