@@ -34,14 +34,39 @@ public class ProdutoTest {
                     .post("/v2/login")
             .then()
                     .extract()
-                    //.path("data.token");
-                    .path("message");
+                    .path("data.token");
+                    //.path("message");
 
-        //System.out.println(token);
+                //System.out.println(token);
 
-        //Tentar inserir produto com valor 0.00 e validar mensagem de erro com status code 422
+        //Tentar inserir produto com valor 0.00, validar mensagem de erro e status code 422
 
-        }
-
+        given()
+                .contentType(ContentType.JSON)
+                .header("token", token)
+                .body("{\n" +
+                        "  \"produtoNome\": \"Playstation 5\",\n" +
+                        "  \"produtoValor\": 0.00,\n" +
+                        "  \"produtoCores\": [\n" +
+                        "    \"preto\", \"rosa\"\n" +
+                        "  ],\n" +
+                        "  \"produtoUrlMock\": \"\",\n" +
+                        "  \"componentes\": [\n" +
+                        "    {\n" +
+                        "      \"componenteNome\": \"Controle\",\n" +
+                        "      \"componenteQuantidade\": 1\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "      \"componenteNome\": \"Jogo de Aventura\",\n" +
+                        "      \"componenteQuantidade\": 1\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}")
+        .when()
+                .post("/v2/produtos")
+        .then()
+                .assertThat()
+                .body("error", equalTo("O valor do produto deve estar entre R$ 0,01 e R$ 7.000,00"))
+                .statusCode(422);
     }
 }
