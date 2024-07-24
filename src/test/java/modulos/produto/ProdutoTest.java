@@ -1,5 +1,6 @@
 package modulos.produto;
 
+import dataFactory.ProdutoDataFactory;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.internal.common.assertion.Assertion;
@@ -51,48 +52,10 @@ public class ProdutoTest {
     @DisplayName("Validar que o valor do produto igual a 0.00 não é permitido")
     public void testValidarLimitesZeradoProibidosValorProduto(){
         //Tentar inserir produto com valor 0.00, validar mensagem de erro e status code 422
-
-        //Criar objeto produto e setar os atributos
-        ProdutoPojo produto = new ProdutoPojo();
-        produto.setProdutoNome("Playstation 5");
-        produto.setProdutoValor(0.00);
-
-        //Criar lista de cores
-        List<String> cores = new ArrayList<>();
-        cores.add("preto");
-        cores.add("rosa");
-
-        //Adicionar cor ao produto
-        produto.setProdutoCores(cores);
-
-        produto.setProdutoUrlMock("");
-
-        //Criar lista de componentes
-        List<ComponentePojo> componentes = new ArrayList<>();
-
-        ComponentePojo componente = new ComponentePojo();
-        componente.setComponenteNome("Controle");
-        componente.setComponenteQuantidade(1);
-
-        //Adicionar a lista de componentes
-        componentes.add(componente);
-
-        //Adicionar componente ao produto
-        produto.setComponentes(componentes);
-
-
-        //Criar Segundo componente
-        ComponentePojo segundoComponente = new ComponentePojo();
-        segundoComponente.setComponenteNome("Memory card");
-        segundoComponente.setComponenteQuantidade(2);
-        //Adicionar a lista de componentes
-        componentes.add(segundoComponente);
-
-
         given()
                 .contentType(ContentType.JSON)
                 .header("token", this.token)
-                .body(produto)
+                .body(ProdutoDataFactory.criarProdutoComumComOValorIgualA(0.00))
         .when()
                 .post("/v2/produtos")
         .then()
@@ -108,24 +71,7 @@ public class ProdutoTest {
         given()
                 .contentType(ContentType.JSON)
                 .header("token", this.token)
-                .body("{\n" +
-                        "  \"produtoNome\": \"Playstation 5\",\n" +
-                        "  \"produtoValor\": 7000.01,\n" +
-                        "  \"produtoCores\": [\n" +
-                        "    \"preto\", \"rosa\"\n" +
-                        "  ],\n" +
-                        "  \"produtoUrlMock\": \"\",\n" +
-                        "  \"componentes\": [\n" +
-                        "    {\n" +
-                        "      \"componenteNome\": \"Controle\",\n" +
-                        "      \"componenteQuantidade\": 1\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"componenteNome\": \"Jogo de Aventura\",\n" +
-                        "      \"componenteQuantidade\": 1\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}")
+                .body(ProdutoDataFactory.criarProdutoComumComOValorIgualA(7000.01))
         .when()
             .post("/v2/produtos")
         .then()
