@@ -7,9 +7,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import pojo.ComponentePojo;
+import pojo.ProdutoPojo;
 import pojo.UsuarioPojo;
 
 //Static Imports
+import java.util.ArrayList;
+import java.util.List;
+
 import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
@@ -46,27 +51,48 @@ public class ProdutoTest {
     @DisplayName("Validar que o valor do produto igual a 0.00 não é permitido")
     public void testValidarLimitesZeradoProibidosValorProduto(){
         //Tentar inserir produto com valor 0.00, validar mensagem de erro e status code 422
+
+        //Criar objeto produto e setar os atributos
+        ProdutoPojo produto = new ProdutoPojo();
+        produto.setProdutoNome("Playstation 5");
+        produto.setProdutoValor(0.00);
+
+        //Criar lista de cores
+        List<String> cores = new ArrayList<>();
+        cores.add("preto");
+        cores.add("rosa");
+
+        //Adicionar cor ao produto
+        produto.setProdutoCores(cores);
+
+        produto.setProdutoUrlMock("");
+
+        //Criar lista de componentes
+        List<ComponentePojo> componentes = new ArrayList<>();
+
+        ComponentePojo componente = new ComponentePojo();
+        componente.setComponenteNome("Controle");
+        componente.setComponenteQuantidade(1);
+
+        //Adicionar a lista de componentes
+        componentes.add(componente);
+
+        //Adicionar componente ao produto
+        produto.setComponentes(componentes);
+
+
+        //Criar Segundo componente
+        ComponentePojo segundoComponente = new ComponentePojo();
+        segundoComponente.setComponenteNome("Memory card");
+        segundoComponente.setComponenteQuantidade(2);
+        //Adicionar a lista de componentes
+        componentes.add(segundoComponente);
+
+
         given()
                 .contentType(ContentType.JSON)
                 .header("token", this.token)
-                .body("{\n" +
-                        "  \"produtoNome\": \"Playstation 5\",\n" +
-                        "  \"produtoValor\": 0.00,\n" +
-                        "  \"produtoCores\": [\n" +
-                        "    \"preto\", \"rosa\"\n" +
-                        "  ],\n" +
-                        "  \"produtoUrlMock\": \"\",\n" +
-                        "  \"componentes\": [\n" +
-                        "    {\n" +
-                        "      \"componenteNome\": \"Controle\",\n" +
-                        "      \"componenteQuantidade\": 1\n" +
-                        "    },\n" +
-                        "    {\n" +
-                        "      \"componenteNome\": \"Jogo de Aventura\",\n" +
-                        "      \"componenteQuantidade\": 1\n" +
-                        "    }\n" +
-                        "  ]\n" +
-                        "}")
+                .body(produto)
         .when()
                 .post("/v2/produtos")
         .then()
